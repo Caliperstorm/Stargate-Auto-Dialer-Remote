@@ -1,8 +1,9 @@
 local monitor = peripheral.find("monitor")
 local nOption = 1
 local editor = false
-local interface = peripheral.find("basic_interface") or peripheral.find("crystal_interface") or peripheral.find("advanced_crystal_interface")
-stargateType = interface.getStargateType()
+local modem = peripheral.find("modem") or error("No modem attached", 0)
+local port = 304 -- change these if you want to only control certain stargates
+local responsePort = 303
 
 -- Function to save the Address List to AddressList.lua
 function saveItemList()
@@ -131,35 +132,21 @@ end
 
 -- Function to Dial the Milky-Way Stargate
 function dial(address)
-    gateIsDialing = true
-    local start = interface.getChevronsEngaged() + 1
-    local prevSymbol = 0
-    for chevron = start,#address.address,1 do
-        drawFrontEnd(term, th, tw)
-        if monitor ~= nil then
-            drawFrontEnd(monitor, mh, mw)
-        end
-        local symbol = address.address[chevron]
-        if stargateType == "sgjourney:milky_way_stargate" then
-            if (prevSymbol > symbol and (prevSymbol - symbol) < 19) or (prevSymbol < symbol and (symbol - prevSymbol) > 19) then
-            -- if chevron % 2 == 0 then
-                interface.rotateClockwise(symbol)
-            else
-                interface.rotateAntiClockwise(symbol)
-            end
-            while(not interface.isCurrentSymbol(symbol)) do sleep(0) end
-            sleep(0.3)
-            interface.openChevron()
-            sleep(0.5)
-            interface.closeChevron()
-            sleep(0.5)
-            prevSymbol = symbol
-        else
-            interface.engageSymbol(symbol)
-            sleep(0.5)
-        end
-    end
+	modem.open(port)
+	modem.transmit(port, responsePort, "dial")
+	sleep(0.2)
+	modem.transmit(port, responsePort, address)
+	repeat
+		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+	until channel == port
+	if message == "dialing" then
+		gateIsDialing = true
+		repeat
+			event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+		until channel == responsePort
+	end
     gateIsDialing = false
+	modem.close(port)
 end
 
 -- Function to set the cursor the the center of the screen and print the line
@@ -205,15 +192,34 @@ function drawBackEnd(display, h, w)
     end
 end
 
+-- Function to ask server if Stargate is connected
+function isStargateConnected()
+	modem.open(port)
+	modem.transmit(port, responsePort, "isStargateConnected")
+	repeat
+		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+	until channel == responsePort
+	if message == "connected" then
+		return true
+	else then
+		return false
+	end
+end
+
+-- Function to disconnect Stargate
+function disconnectStargate()
+	modem.transmit(port, responsePort, "disconnect")
+end
+
 -- Function to draw the Main Menu
 function drawFrontEnd(display, h, w)
     loadItemList()
     display.clear()
-    if interface.isStargateConnected() == true then
+    if isStargateConnected() == true then
         display.setTextColor(colors.red)
         printCenter(display, h/2, "\187 Disconnect Wormhole \171")
         if event == "stargate_disconnected" or event == "stargate_reset" then end
-    elseif gateIsDialing == true or interface.getChevronsEngaged() > 0 then
+    elseif gateIsDialing == true then
         display.setTextColor(colors.yellow)
         printCenter(display, h/2, "Dialing Stargate Address")
         printCenter(display, h/2+1, "Please Wait...")
@@ -315,8 +321,8 @@ while true do
         elseif key == keys.enter or key == keys.numPadEnter then
             if #itemList < 1 then
                 addNewLocation()
-            elseif interface.isStargateConnected() == true then
-                interface.disconnectStargate()
+            elseif isStargateConnected() == true then
+                disconnectStargate()
             elseif editor == true then
                 editLocationDetails()
             elseif editor == false then
@@ -352,16 +358,16 @@ while true do
     elseif event == "mouse_click" and gateIsDialing ~= true then
         if #itemList < 1 then
             addNewLocation()
-        elseif interface.isStargateConnected() == true then
-            interface.disconnectStargate()
+        elseif isStargateConnected() == true then
+            disconnectStargate()
         elseif editor == true then
             editLocationDetails()
         elseif editor == false then
             dial(itemList[nOption])
         end
     elseif monitor ~= nil and event == "monitor_touch" and gateIsDialing ~= true then
-        if (y < 1000) and interface.isStargateConnected() == true then
-            interface.disconnectStargate()
+        if (y < 1000) and isStargateConnected() == true then
+            disconnectStargate()
         -- Top Third of the Monitor
         elseif ((y < mh/3) and (x < mw/3)) then
             if editor == true then
