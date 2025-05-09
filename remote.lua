@@ -134,7 +134,7 @@ end
 function dial(address)
 	modem.open(port)
 	modem.transmit(port, responsePort, "dial")
-	sleep(0.2)
+	sleep(0.1)
 	modem.transmit(port, responsePort, address)
 	repeat
 		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")

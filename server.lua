@@ -64,11 +64,14 @@ while true do
 		repeat
 			event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 		until channel == port
+		sleep(0.1)
 		dial(message)
 	elseif message == "isStargateConnected" then
 		if interface.isStargateConnected() == true then
+			sleep(0.1)
 			modem.transmit(responsePort, port, "connected")
 		else
+			sleep(0.1)
 			modem.transmit(responsePort, port, "not connected")
 		end
 	elseif message == "disconnect" then
