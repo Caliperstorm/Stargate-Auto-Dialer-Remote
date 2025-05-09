@@ -3,10 +3,13 @@ It requires the remote script to run on an advanced wireless pocket computer, an
 
 Installation:
 on the advanced wireless pocket computer, run: 
+
 wget https://github.com/Caliperstorm/Stargate-Auto-Dialer-Remote/raw/main/startupRemote.lua
+
 wget https://github.com/Caliperstorm/Stargate-Auto-Dialer-Remote/raw/main/remote.lua
 
 on the interface computer, run:
+
 wget https://github.com/Caliperstorm/Stargate-Auto-Dialer-Remote/raw/main/server.lua
 
 then run startupRemote and server on the respective computers
