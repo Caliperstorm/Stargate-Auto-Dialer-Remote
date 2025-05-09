@@ -201,7 +201,7 @@ function isStargateConnected()
 	until channel == responsePort
 	if message == "connected" then
 		return true
-	else then
+	else
 		return false
 	end
 end
