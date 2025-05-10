@@ -132,23 +132,23 @@ end
 
 -- Function to Dial the Milky-Way Stargate
 function dial(address)
-	modem.open(responsePort)
+--	modem.open(responsePort)
 	modem.transmit(port, responsePort, "dial")
 	sleep(0.1)
 	modem.transmit(port, responsePort, address)
-	repeat
-		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
-	until channel == responsePort
-	if message == "dialing" then
-		gateIsDialing = true
-		drawFrontEnd(term, th, tw)
-		repeat
-			event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
-		until channel == responsePort
-	end
-    gateIsDialing = false
-	drawFrontEnd(term, th, tw)
-	modem.close(responsePort)
+--	repeat
+--		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+--	until channel == responsePort
+--	if message == "dialing" then
+--		gateIsDialing = true
+--		drawFrontEnd(term, th, tw)
+--		repeat
+--			event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
+--		until channel == responsePort
+--	end
+--	gateIsDialing = false
+--	drawFrontEnd(term, th, tw)
+--	modem.close(responsePort)
 end
 
 -- Function to set the cursor the the center of the screen and print the line

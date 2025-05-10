@@ -27,7 +27,7 @@ end
 
 -- Function to Dial the Milky-Way Stargate
 function dial(address)
-	modem.transmit(responsePort, port, "dialing")
+--	modem.transmit(responsePort, port, "dialing")
     local start = interface.getChevronsEngaged() + 1
     local prevSymbol = 0
     for chevron = start,#address.address,1 do
@@ -52,7 +52,7 @@ function dial(address)
         end
     end
 	sleep(0.1)
-	modem.transmit(responsePort, port, "complete")
+--	modem.transmit(responsePort, port, "complete")
 end
 
 -- Script Actually Starts Here
