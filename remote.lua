@@ -132,7 +132,7 @@ end
 
 -- Function to Dial the Milky-Way Stargate
 function dial(address)
-	modem.open(port)
+	modem.open(responsePort)
 	modem.transmit(port, responsePort, "dial")
 	sleep(0.1)
 	modem.transmit(port, responsePort, address)
@@ -141,11 +141,13 @@ function dial(address)
 	until channel == port
 	if message == "dialing" then
 		gateIsDialing = true
+		drawFrontEnd(term, th, tw)
 		repeat
 			event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 		until channel == responsePort
 	end
     gateIsDialing = false
+	drawFrontEnd(term, th, tw)
 	modem.close(port)
 end
 
@@ -194,11 +196,12 @@ end
 
 -- Function to ask server if Stargate is connected
 function isStargateConnected()
-	modem.open(port)
+	modem.open(responsePort)
 	modem.transmit(port, responsePort, "isStargateConnected")
 	repeat
 		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
 	until channel == responsePort
+	modem.close(responsePort)
 	if message == "connected" then
 		return true
 	else

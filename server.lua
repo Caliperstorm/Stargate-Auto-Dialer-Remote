@@ -51,6 +51,7 @@ function dial(address)
             sleep(0.5)
         end
     end
+	sleep(0.1)
 	modem.transmit(responsePort, port, "complete")
 end
 
