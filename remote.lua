@@ -148,7 +148,7 @@ function dial(address)
 	end
     gateIsDialing = false
 	drawFrontEnd(term, th, tw)
-	modem.close(port)
+	modem.close(responsePort)
 end
 
 -- Function to set the cursor the the center of the screen and print the line
@@ -221,7 +221,6 @@ function drawFrontEnd(display, h, w)
     if isStargateConnected() == true then
         display.setTextColor(colors.red)
         printCenter(display, h/2, "\187 Disconnect Wormhole \171")
-        if event == "stargate_disconnected" or event == "stargate_reset" then end
     elseif gateIsDialing == true then
         display.setTextColor(colors.yellow)
         printCenter(display, h/2, "Dialing Stargate Address")
