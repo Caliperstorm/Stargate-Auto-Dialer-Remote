@@ -56,7 +56,7 @@ function dial(address)
 end
 
 -- Script Actually Starts Here
-modem.open(responsePort)
+modem.open(port)
 while true do
     repeat
 		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")

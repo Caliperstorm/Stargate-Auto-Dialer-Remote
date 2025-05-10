@@ -138,7 +138,7 @@ function dial(address)
 	modem.transmit(port, responsePort, address)
 	repeat
 		event, side, channel, replyChannel, message, distance = os.pullEvent("modem_message")
-	until channel == port
+	until channel == responsePort
 	if message == "dialing" then
 		gateIsDialing = true
 		drawFrontEnd(term, th, tw)
